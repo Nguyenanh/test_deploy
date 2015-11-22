@@ -3,10 +3,11 @@
 # Supports bulk-adding hosts to roles, the primary server in each group
 # is considered to be the first unless any hosts have the primary
 # property set.  Don't declare `role :all`, it's a meta role.
-
-role :app, %w{deploy@example.com}
-role :web, %w{deploy@example.com}
-role :db,  %w{deploy@example.com}
+user = "vagrant"
+ip_address = "127.0.0.1"
+role :app, ["#{user}@#{ip_address}"]
+role :web, ["#{user}@#{ip_address}"]
+role :db,  ["#{user}@#{ip_address}"]
 
 
 # Extended Server Syntax
@@ -15,9 +16,17 @@ role :db,  %w{deploy@example.com}
 # server list. The second argument is a, or duck-types, Hash and is
 # used to set extended properties on the server.
 
-server 'example.com', user: 'deploy', roles: %w{web app}, my_property: :my_value
+server ip_address, user: user, roles: %w{web app}, my_property: :my_value
 
+set :rails_env, 'staging'
+set :bundle_flags, "--no-deployment"
+set :branch, "master"
 
+set :ssh_options, {
+  keys: %w(/home/anhn/server_vagrant/.vagrant/machines/default/virtualbox/private_key),
+  forward_agent: true,
+  port: 2222
+}
 # Custom SSH Options
 # ==================
 # You may pass any option but keep in mind that net/ssh understands a
